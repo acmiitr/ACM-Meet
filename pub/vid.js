@@ -4,7 +4,7 @@
 let myvidS
 const vidgrid = document.getElementById('vidgrid')
 const myvid = document.createElement('video') //adding an html element for video
-myvid.muted = true; //initally the video is m
+// myvid.muted = true; //initally the video is m
 navigator.mediaDevices.getUserMedia({
   video: true,
   audio: false
@@ -20,6 +20,7 @@ navigator.mediaDevices.getUserMedia({
       addVidS(video, userVideoStream)
     })
   });
+
   socket.on('user-connected', (userid) => {
     connectNewuser(userid, stream);
   })
@@ -29,6 +30,7 @@ navigator.mediaDevices.getUserMedia({
   
 })
 //prompting the user for permissions!(a promise of Js)
+var user_name = prompt("Please enter your name", "username");
 
 var peer = new Peer(undefined, {
   path: '/peerjs',
@@ -44,9 +46,9 @@ peer.on('open', id => {
 })
 
 connectNewuser = (userid, stream) => {
-  console.log("new user connected jeez!", userid)
+  console.log("new user connected!", userid)
   //calling the newly connected user!
-  const call = peer.call(userid, stream)
+  const call = peer.call(userid, stream) //calls the connected user
   const video = document.createElement('video')
   call.on('stream', userVideoStream => {
     addVidS(video, userVideoStream)
@@ -68,19 +70,20 @@ addVidS = (video, stream) => {
   vidgrid.append(video)
 
 } // a func to add a vid stream
+
 let text = $('input');
 $('html').keydown((e) => {
   if (e.which == 13 && text.val().length !== 0) {
     // console.log(text.val());
 
-    socket.emit('message', text.val());
+    socket.emit('message', text.val(), user_name);
     text.val('')
   }
 }) 
 
 
-socket.on("createMessage", message => {
-  $("ul").append(`<li class="message"><b>User</b><br/>${message}</li><br/>`);
+socket.on("createMessage", (message,userName) => {
+  $("ul").append(`<li class="message"><b>${userName}</b><br/>${message}</li><br/>`);
   console.log(message);
   scrollToBottom()
 })

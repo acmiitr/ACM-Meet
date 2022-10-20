@@ -23,37 +23,31 @@ function create_UUID() {
     return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
   });
   return uuid;
-}
+} //unique rand url generator
 let uuid = create_UUID();
 
 app.get('/', (req, res) => {
   res.redirect(`/${uuid}`)
-})
+}) // redrirects to the url generated
 app.get('/:view', (req, res) => {
   res.status(200);
   res.render('view', { viewId: req.params.view });
 })
+
+//creating the room
 io.on('connection', socket => {
   socket.on('join-room', (roomid, userid) => {
     console.log("Yea you made it to the room!")
     socket.join(roomid)
     socket.to(roomid).emit('user-connected', userid);
 
-    socket.on('message', (message) => {
+    socket.on('message', (message,user_name) => {
       //send message to the same room
-      io.to(roomid).emit('createMessage', message)
+      io.to(roomid).emit('createMessage', message,user_name)
     }); 
   })
 })
 
-app.get('/about', (req, res) => {
-  res.statuscode = 200;
-  res.setHeader("Content-Type", "text/html"); //sets the content type to html
-
-  const data = fs.readFileSync("about.html");
-  console.log("hey about was loaded");
-  res.end(data.toString());
-})
 
 
 // we also have to listen to a server, or else the server won't run:
