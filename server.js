@@ -51,6 +51,6 @@ io.on('connection', socket => {
 
 
 // we also have to listen to a server, or else the server won't run:
-server.listen(port, () => {
+server.listen(process.env.PORT||port, () => {
   console.log(`Server listens on port: ${port}`);
 });
