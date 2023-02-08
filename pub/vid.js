@@ -83,7 +83,7 @@ $('html').keydown((e) => {
 
 
 socket.on("createMessage", (message,userName) => {
-  $("ul").append(`<li class="message"><b>${userName}</b><br/>${message}</li><br/>`);
+  $("ul").append(`<li class="message"><b>${userName==user_name?"Me":userName}</b><br/>${message}</li><br/>`);
   console.log(message);
   scrollToBottom()
 })
